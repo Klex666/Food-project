@@ -206,4 +206,57 @@ new MenuCard(
     ".menu .container"
 ).render();
 
+
+// Forms 
+
+const form = document.querySelectorAll('form');
+const message = {
+    loading: 'Загрузка...',
+    sucess: 'Благодарим! Мы скоро свяжемся с вами!',
+    fail: 'Ошибка'
+};
+
+form.forEach(item => {
+    postData(item);
+});
+
+
+function postData(form) {
+    form.addEventListener('submit', (e) => {
+        e.preventDefault();
+
+
+        let statusMessages = document.createElement('div');
+        statusMessages.classList.add('status');
+        statusMessages.textContent = message.loading;
+        form.appendChild(statusMessages);
+
+
+        const request = new XMLHttpRequest();
+        request.open('POST', 'server.php');
+        const formData = new FormData(form);
+        request.send(formData);
+
+
+
+        request.addEventListener('load', () => {
+            if (request.status === 200) {
+                console.log(request.response);
+                statusMessages.textContent = message.sucess;
+                form.reset();
+                setTimeout(() => {
+                    statusMessages.remove();
+                },3000);
+            } else {
+                statusMessages.textContent = message.fail;
+            }
+        });
+    });
+}
+
+
+
+
 }); 
+
+
