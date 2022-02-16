@@ -232,22 +232,23 @@ function postData(form) {
         `;
         form.insertAdjacentElement('afterend', statusMessages);
 
-
-        const request = new XMLHttpRequest();
-        request.open('POST', 'server.php');
         const formData = new FormData(form);
-        request.send(formData);
 
-
-
-        request.addEventListener('load', () => {
-            if (request.status === 200) {
-                showThanksModal(message.sucess);
-                form.reset();
-                statusMessages.remove();
-            } else {
-                showThanksModal(message.fail);
-            }
+        fetch('server.php', {
+            method: 'POST',
+            body: formData
+        })
+        .then(data => data.text())
+        .then(data => {
+            console.log(data);
+            showThanksModal(message.sucess);
+            statusMessages.remove();
+        })
+        .catch(() => {
+            showThanksModal(message.fail);
+        })
+        .finally(() => {
+            form.reset();
         });
     });
 }
